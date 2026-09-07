@@ -8,4 +8,12 @@ Broches RFID-RC522 :
   GND  --> GND
   RST  --> 3
   3.3V --> 3V3
+
+Broches BMP280 :
+  VCC  -->
+  GND  -->
+  SCL  -->
+  SDA  -->
+  CSB  -->
+  SSD  -->
 ```
