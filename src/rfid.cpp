@@ -13,7 +13,6 @@ void initRfid(){
     delay(100);
 
     Serial.println("RC522 pret !");
-    Serial.println("Approche une carte RFID...");
 }
 
 void verifierRfid(){

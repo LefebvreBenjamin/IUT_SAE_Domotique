@@ -4,18 +4,19 @@
 Adafruit_BMP280 bmp;
 
 void initBMP280(){
-  Wire.begin(8, 9); // SDA = 8, SCL = 9
+  delay(100);
+  
   bool detected = bmp.begin(0x76);
   if (!detected) {
+    Serial.println("  (0x76 non trouvé, essai 0x77...)");
     detected = bmp.begin(0x77);
   }
 
   if (!detected) {
-    Serial.println("BMP280 non detecte !");
-    while (1);
+    Serial.println("  BMP280 non détecté");
+  } else {
+    Serial.println("  BMP280 OK");
   }
-
-  Serial.println("BMP280 OK");
 }
 
 void updateBMP280Data() {
