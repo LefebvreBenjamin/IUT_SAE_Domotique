@@ -4,8 +4,5 @@
 #include <Arduino.h>
 
 
-extern Adafruit_BMP280 bmp;
-
-
 void initBMP280();
 void updateBMP280Data();
