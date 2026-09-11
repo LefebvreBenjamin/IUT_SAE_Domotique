@@ -24,4 +24,14 @@ Broches BH1750 :
   SDA -> 9
   ADD -> NC/GND or VCC (see library doc : https://github.com/claws/BH1750 )
 
+Broches Ecrans :
+  VCC -> 3.3
+  GND  -> GND
+  CS  -> 18
+  RESET  -> RST 
+  DC  -> 19
+  MOSI  -> 7
+  SCK  -> 6
+  LED  -> 3.3
+  MISO -> 2
 ```
