@@ -34,4 +34,10 @@ Broches Ecrans :
   SCK  -> 6
   LED  -> 3.3
   MISO -> 2
+
+  T_CLK (ou T_SCK) -> Pin 6 (Partagé avec TFT_SCK)
+  T_DIN (ou T_MOSI) -> Pin 7 (Partagé avec TFT_MOSI)
+  T_DO (ou T_MISO) -> Pin 2 (Partagé avec TFT_MISO)
+  T_CS -> Pin 4 (Permet à l'ESP32 de cibler la puce tactile au lieu de la puce d'affichage)
+  T_IRQ -> Pin 5 (Signal d'interruption : le tactile prévient l'ESP32 dès que tu poses le doigt)
 ```
