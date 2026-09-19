@@ -28,7 +28,7 @@ Broches Ecrans :
   VCC -> 3.3
   GND  -> GND
   CS  -> 18
-  RESET  -> RST 
+  RESET  -> 21
   DC  -> 19
   MOSI  -> 7
   SCK  -> 6
@@ -40,4 +40,10 @@ Broches Ecrans :
   T_DIN (ou T_MOSI) -> Pin 7 (Partagé avec TFT_MOSI)
   T_DO (ou T_MISO) -> Pin 2 (Partagé avec TFT_MISO)
   T_IRQ -> Pin 5 (Signal d'interruption : le tactile prévient l'ESP32 dès que tu poses le doigt)
+
+Broches MQ-9 :
+  VCC  -> alimentation du module
+  GND  -> GND
+  AO   -> 0
+  DO   -> NC
 ```

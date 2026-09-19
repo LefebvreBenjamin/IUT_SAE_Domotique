@@ -14,8 +14,10 @@ enum DkScreenId {
 static DkScreenId g_screen = DK_SCREEN_3;
 static bool g_dirty = true;
 static uint32_t g_lastDrawMs = 0;
+static uint32_t g_lastDrawVarMs = 0;
 
 void drawCurrentScreen();
+static void drawDashboardVariable();
 void handleUiActions();
 
 static void drawCenteredText(const char *text, int16_t x, int16_t y) {
@@ -30,10 +32,7 @@ static void drawCenteredText(const char *text, int16_t x, int16_t y) {
 
 void initScreen(){
     Serial.println("Init screen"); 
-   
-  pinMode(TFT_CS, OUTPUT);
-  digitalWrite(TFT_CS, HIGH);
-    SPI.begin(TFT_SCK, TFT_MISO, TFT_MOSI, -1);
+
     tft.init(240, 320);
     tft.setRotation(1);
     tft.invertDisplay(false); // Rétablit les vraies couleurs (fond blanc)
@@ -44,11 +43,14 @@ void initScreen(){
 
 void updateScreen(){
     handleUiActions();
-    // Redraw only when needed (more "pro" and faster)
-    if (g_dirty || (millis() - g_lastDrawMs) > 1000) {
+    if (g_dirty || (millis() - g_lastDrawMs) > 15000) {
         drawCurrentScreen();
         g_dirty = false;
         g_lastDrawMs = millis();
+    }
+    if (g_screen == DK_SCREEN_3 && (millis() - g_lastDrawVarMs) > 100) {
+        drawDashboardVariable();
+        g_lastDrawVarMs = millis();
     }
   delay(5);
 }
@@ -210,33 +212,33 @@ void drawDashboardScreen() {
   tft.print("DASHBOARD");
 
   tft.drawRoundRect(86, 13, 109, 30, 4, 0x10C4);
-  tft.drawRGBBitmap(20, 95, icon_temp_el_8iewusar9, 16, 16);
+  //tft.drawRGBBitmap(20, 95, icon_temp_el_8iewusar9, 16, 16);
 
-  tft.drawRGBBitmap(122, 117, icon_nuke_el_wc9q5tvoc, 16, 16);
-
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1); 
-  tft.setCursor(47, 98);
-  tft.print("123 C"); // Supprimé le caractère '°' pour éviter les glitchs d'affichage avec Adafruit
+  //tft.drawRGBBitmap(122, 117, icon_nuke_el_wc9q5tvoc, 16, 16);
 
   tft.setTextColor(NOIR);
   tft.setTextSize(1); 
-  tft.setCursor(140, 120);
-  tft.print("Normal");
+  tft.setCursor(19, 98);
+  //tft.printf("%.2f C", sensorData.temperature);
+
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1); 
+  tft.setCursor(125, 120);
+  tft.print("Qualité");
 
   tft.setTextColor(NOIR);
   tft.setTextSize(1); 
   tft.setCursor(212, 14);
   tft.print("Connected");
 
-  tft.drawRGBBitmap(298, 13, icon_wifi_1_el_ur9q8wxw3, 16, 16);
-
+  //tft.drawRGBBitmap(298, 13, icon_wifi_1_el_ur9q8wxw3, 16, 16);
+/*
   tft.setTextColor(NOIR);
   tft.setTextSize(1); 
   tft.setCursor(47, 165);
-  tft.print("250 Lux");
+  tft.printf("%.2f ppm", sensorData.temperature);*/
 
-  tft.drawRGBBitmap(19, 162, icon_nuke_el_wc9q5tvoc, 16, 16);
+  //tft.drawRGBBitmap(19, 162, icon_nuke_el_wc9q5tvoc, 16, 16);
 
   tft.setTextColor(NOIR);
   tft.setTextSize(1); 
@@ -248,24 +250,25 @@ void drawDashboardScreen() {
   tft.setCursor(231, 150);
   tft.print("Volet");
 
-  tft.fillCircle(285, 106, 6, 0x10C4);
-  tft.fillCircle(285, 134, 6, 0x10C4);
-  tft.fillCircle(285, 160, 6, 0x10C4);
-  tft.drawRGBBitmap(20, 119, icon_temp_el_8iewusar9, 16, 16);
+  //tft.fillCircle(285, 106, 6, 0x10C4);
+  //tft.fillCircle(285, 134, 6, 0x10C4);
+  //tft.fillCircle(285, 160, 6, 0x10C4);
+  //tft.drawRGBBitmap(20, 119, icon_temp_el_8iewusar9, 16, 16);
+
+  
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1); 
+  tft.setCursor(19, 121); 
+  //tft.printf("%.2f lx", sensorData.light);
+
+  //tft.drawRGBBitmap(20, 142, icon_temp_el_8iewusar9, 16, 16);
 
   tft.setTextColor(NOIR);
   tft.setTextSize(1); 
-  tft.setCursor(47, 121);
-  tft.print("10%");
+  tft.setCursor(19, 145);
+  //tft.printf("%.2f hPa", sensorData.pressure);
 
-  tft.drawRGBBitmap(20, 142, icon_temp_el_8iewusar9, 16, 16);
-
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1); 
-  tft.setCursor(47, 145);
-  tft.print("1123 hPA");
-
-  tft.fillCircle(190, 125, 6, NOIR);
+  //tft.fillCircle(190, 125, 6, NOIR);
   tft.fillRoundRect(5, 13, 63, 30, 6, BLANC);
   tft.drawRoundRect(5, 13, 63, 30, 6, NOIR);
   tft.setTextColor(NOIR);
@@ -301,6 +304,90 @@ void drawDashboardScreen() {
   tft.setTextSize(1); 
   tft.setCursor(148, 68);
   tft.print("Air");
+
+}
+
+static void drawDashboardVariable() {
+  tft.fillRect(19, 98, 65, 56, DK_BG);
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1); 
+  tft.setCursor(19, 98);
+  tft.printf("%.2f Celsius", sensorData.temperature);
+
+  
+  
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1); 
+  tft.setCursor(19, 121); 
+  tft.printf("%.2f lux", sensorData.light);
+
+
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1); 
+  tft.setCursor(19, 145);
+  tft.printf("%.2f hPa", sensorData.pressure);
+
+
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1); 
+  tft.setCursor(212, 28);
+  tft.print("12:35 DD/MM/AAAA");
+
+
+  //Statuts
+  tft.fillRect(275, 83, 20, 50, DK_BG);
+  if (sensorData.porteOpen)
+  {
+    tft.fillCircle(285, 100, 6, VERT); //Porte
+  }
+  else
+  {
+    tft.fillCircle(285, 100, 6, ROUGE); //Porte
+  }
+
+  if (sensorData.alarmActive)
+  {
+    tft.fillCircle(285, 123, 6, VERT); //Alarme
+  }
+  else
+  {
+    tft.fillCircle(285, 123, 6, ROUGE); //Alarme
+  }
+
+  if (sensorData.voletOpen)
+  {
+    tft.fillCircle(285, 150, 6, VERT); //Porte
+  }
+  else
+  {
+    tft.fillCircle(285, 150, 6, ROUGE); //Porte
+  }
+  
+  
+
+  //tft.drawRoundRect(206, 8, 111, 40, 4, 0x10C4);
+  //tft.drawRoundRect(215, 64, 94, 117, 4, 0x10C4);
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1); 
+  tft.setCursor(233, 96);
+
+  //environement
+  tft.fillRect(165, 78, 20, 50, DK_BG);
+  tft.fillCircle(180, 123, 6, NOIR);   //Air
+  if (sensorData.airQuality.good)
+  {
+    tft.fillCircle(180, 120, 6, VERT); //Air
+  }
+  else if (sensorData.airQuality.moderate)
+  {
+    tft.fillCircle(180, 120, 6, JAUNE); //Air
+  }
+  else if (sensorData.airQuality.bad)
+  {
+    tft.fillCircle(180, 120, 6, ROUGE); //Air
+  }
+
+  
 
 }
 
