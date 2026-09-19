@@ -31,7 +31,9 @@ static void drawCenteredText(const char *text, int16_t x, int16_t y) {
 void initScreen(){
     Serial.println("Init screen"); 
    
-    SPI.begin(TFT_SCK, TFT_MISO, TFT_MOSI, TFT_CS);
+  pinMode(TFT_CS, OUTPUT);
+  digitalWrite(TFT_CS, HIGH);
+    SPI.begin(TFT_SCK, TFT_MISO, TFT_MOSI, -1);
     tft.init(240, 320);
     tft.setRotation(1);
     tft.invertDisplay(false); // Rétablit les vraies couleurs (fond blanc)

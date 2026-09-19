@@ -3,16 +3,27 @@
 MFRC522 rfid(SS_PIN, RST_PIN);
 
 void initRfid(){
-    Serial.println("Initialisation RFID...");
+  Serial.println("Initialisation RFID...");
 
-    // SPI avec nos broches
-    SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
+  //SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, -1);
 
-    rfid.PCD_Init();
+  rfid.PCD_Init();
 
-    delay(100);
+  delay(100);
 
-    Serial.println("RC522 pret !");
+  byte version = rfid.PCD_ReadRegister(MFRC522::VersionReg);
+  Serial.print("RC522 VersionReg = 0x");
+  if (version < 0x10) {
+    Serial.print("0");
+  }
+  Serial.println(version, HEX);
+
+  if (version == 0x91 || version == 0x92 || version == 0x88) {
+    Serial.println("RFID initialise correctement");
+  } else {
+    Serial.println("ERREUR RFID : le RC522 ne repond pas");
+    Serial.println("Verifier 3.3V, GND, CS/SDA=10, RST=3 et SPI 6/2/7");
+  }
 }
 
 void verifierRfid(){

@@ -5,33 +5,37 @@
 #include "SensorData.h"
 #include "BH1750_LightSensor.h"
 #include "screen.h"
+#include "main.h"
 
 void setup() {
   Wire.begin(9, 8);
+  SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN);
   Serial.begin(115200);
   delay(500);
   
-  initScreen();
   initRfid();
-  initBMP280();
-  initBH1750();
+  //initScreen();
+  //initBMP280();
+  //initBH1750();
 
   delay(500);
 }
 
 void loop() {
-  verifierRfid();
-  updateBMP280Data();
-  updateBH1750Data();
-  updateScreen();
+  digitalWrite(TFT_CS, 1);
 
-  Serial.print("Temperature: ");
-  Serial.print(sensorData.temperature);
-  Serial.println(" °C");
-  Serial.print("Pressure: ");
-  Serial.print(sensorData.pressure);
-  Serial.println(" hPa");
-  Serial.print(sensorData.light);
-  Serial.println(" lux");
+  digitalWrite(SS_PIN, 0);
+  verifierRfid();
+  digitalWrite(SS_PIN, 1);
+  //updateBMP280Data();
+  //updateBH1750Data();
+  
+  digitalWrite(TFT_CS, 0);
+  updateScreen();
+  digitalWrite(TFT_CS, 1);
+
+  //Serial.println(sensorData.temperature);
+  //Serial.println(sensorData.light);
+  //Serial.println(sensorData.pressure);
   delay(500);
 }
