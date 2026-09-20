@@ -5,7 +5,10 @@ MFRC522 rfid(SS_PIN, RST_PIN);
 void initRfid(){
   Serial.println("Initialisation RFID...");
 
-  //SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, -1);
+  // Keep the display deselected while the RC522 starts on the shared SPI bus.
+  digitalWrite(TFT_CS, HIGH);
+  digitalWrite(SS_PIN, HIGH);
+  digitalWrite(RST_PIN, HIGH);
 
   rfid.PCD_Init();
 
@@ -22,7 +25,6 @@ void initRfid(){
     Serial.println("RFID initialise correctement");
   } else {
     Serial.println("ERREUR RFID : le RC522 ne repond pas");
-    Serial.println("Verifier 3.3V, GND, CS/SDA=10, RST=3 et SPI 6/2/7");
   }
 }
 
