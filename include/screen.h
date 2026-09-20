@@ -1,3 +1,5 @@
+#pragma once
+
 #include "SPI.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ST7789.h"
@@ -9,6 +11,22 @@
 #define ROUGE 0xF800
 #define VERT 0x07E0
 #define JAUNE 0xFFE0
+
+
+enum DkScreenId
+{
+  DK_SCREEN_0,
+  DK_SCREEN_1,
+  DK_SCREEN_2,
+  DK_SCREEN_3,
+  DK_SCREEN_4,
+  DK_SCREEN_5
+};
+
+
+void loadScreen(int num);
+int getCurrentScreen();
+
 
 void initScreen();
 void updateScreen();

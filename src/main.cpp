@@ -60,5 +60,4 @@ void loop() {
   digitalWrite(CS_TACTIL, 0);
   updateTouchScreen();
 
-  delay(5);
 }
