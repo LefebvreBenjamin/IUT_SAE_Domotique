@@ -2,6 +2,7 @@
 
 SensorData sensorData;
 ScreenElement screenElement = {};
+TimeDate timeDate = {};
 
 void addButton(const Button &button) {
     if (screenElement.count >= MAX_BUTTONS) {

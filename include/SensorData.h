@@ -23,25 +23,26 @@ struct SensorData
   {
     bool ouverture;
     bool fermeture;
-  }portail;
+  } portail;
 
   struct Alarme
   {
     bool activer;
     bool desactiver;
-  }alarme;
+  } alarme;
 
-  struct GachePorte{
+  struct GachePorte
+  {
     bool activer;
-    bool desactiver;
-  }gacheporte;
+    bool active;
+  } gacheporte;
 
   struct VoletRoulant
   {
     bool Monter;
     bool Stop;
     bool Descendre;
-  }voletRoulant;
+  } voletRoulant;
 };
 
 typedef struct Button
@@ -62,8 +63,18 @@ struct ScreenElement
   int count;
 };
 
+struct TimeDate
+{
+  int seconde;
+  int heure;
+  int minute;
+  int jour;
+  int mois;
+  int annee;
+};
 
 extern ScreenElement screenElement;
 extern SensorData sensorData;
+extern TimeDate timeDate;
 
 void addButton(const Button &button);

@@ -48,14 +48,12 @@ void actionOuvrirPortail()
 
 void actionActiverGachePorte()
 {
-    sensorData.gacheporte.desactiver = false;
     sensorData.gacheporte.activer = true;
 }
 
 void actionDesactiverGachePorte()
 {
     sensorData.gacheporte.activer = false;
-    sensorData.gacheporte.desactiver = true;
 }
 
 void actionPortailOuverture()

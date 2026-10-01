@@ -21,3 +21,4 @@ void actionPortailOuverture();
 void actionPortailFermeture();
 void actionActiverGachePorte();
 void actionDesactiverGachePorte();
+

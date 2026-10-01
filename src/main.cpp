@@ -9,6 +9,8 @@
 #include "screen.h"
 #include "main.h"
 #include "tactilScreen.h"
+#include "gachePorte.h"
+#include "time_et_tempo_EDF.h"
 
 void setup() {
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
@@ -38,6 +40,10 @@ void setup() {
   initMQ9();
   initBMP280();
   initBH1750();
+  initGachePorte();
+
+  initEdf();
+
 
   delay(500);
 }
@@ -53,7 +59,9 @@ void loop() {
   updateMQ9Data();
   updateBMP280Data();
   updateBH1750Data();
-  
+  updateGachePorte();
+
+  updateTimer();
   
   digitalWrite(SS_PIN, 1);
   digitalWrite(TFT_CS, 0);

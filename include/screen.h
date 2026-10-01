@@ -31,3 +31,4 @@ int getCurrentScreen();
 
 void initScreen();
 void updateScreen();
+void moveSlider(int x, int y);
