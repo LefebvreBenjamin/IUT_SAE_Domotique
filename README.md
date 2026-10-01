@@ -15,7 +15,7 @@ Broches BMP280 :
   SCL  -->  8
   SDA  -->  9
   CSB  -->  3V3
-  SSD  -->  GND
+  SDO  -->  GND
 
 Broches BH1750 :
   VCC -> 3V3 or 5V

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "rfid.h"
+#include "cartesRfid.h"
 #include "bmp280.h"
 #include "SensorData.h"
 #include "BH1750_LightSensor.h"
@@ -30,6 +31,7 @@ void setup() {
   digitalWrite(TFT_CS, 1);
   digitalWrite(CS_TACTIL, 1);
 
+  initCartesRfid();
   initRfid();
   initScreen();
   initTouchScreen();
@@ -46,6 +48,7 @@ void loop() {
   digitalWrite(CS_TACTIL, 1);
   digitalWrite(SS_PIN, 0);
   verifierRfid();
+  updateCartesRfid();
 
   updateMQ9Data();
   updateBMP280Data();

@@ -31,6 +31,11 @@ struct SensorData
     bool desactiver;
   }alarme;
 
+  struct GachePorte{
+    bool activer;
+    bool desactiver;
+  }gacheporte;
+
   struct VoletRoulant
   {
     bool Monter;
@@ -49,9 +54,11 @@ typedef struct Button
   int scene;
 } Button;
 
+#define MAX_BUTTONS 20
+
 struct ScreenElement
 {
-  Button button[10];
+  Button button[MAX_BUTTONS];
   int count;
 };
 

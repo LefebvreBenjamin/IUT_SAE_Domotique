@@ -1,4 +1,5 @@
 #include "buttonAction.h"
+#include "cartesRfid.h"
 
 void actionChangeScreen(int screenNumber)
 {
@@ -17,6 +18,7 @@ void actionGoHome()
 
 void actionVoletDescendre()
 {
+    Serial.println("Volet Descend");
     sensorData.voletRoulant.Monter = false;
     sensorData.voletRoulant.Stop = false;
     sensorData.voletRoulant.Descendre = true;
@@ -24,6 +26,7 @@ void actionVoletDescendre()
 
 void actionVoletMonter()
 {
+    Serial.println("Volet Monte");
     sensorData.voletRoulant.Descendre = false;
     sensorData.voletRoulant.Stop = false;
     sensorData.voletRoulant.Monter = true;
@@ -31,6 +34,7 @@ void actionVoletMonter()
 
 void actionVoletStop()
 {
+    Serial.println("Volet Stop");
     sensorData.voletRoulant.Monter = false;
     sensorData.voletRoulant.Descendre = false;
     sensorData.voletRoulant.Stop = true;
@@ -42,16 +46,16 @@ void actionOuvrirPortail()
     sensorData.portail.ouverture = true;
 }
 
-void actionActiverAlarme()
+void actionActiverGachePorte()
 {
-    sensorData.alarme.desactiver = false;
-    sensorData.alarme.activer = true;
+    sensorData.gacheporte.desactiver = false;
+    sensorData.gacheporte.activer = true;
 }
 
-void actionDesactiverAlarme()
+void actionDesactiverGachePorte()
 {
-    sensorData.alarme.activer = false;
-    sensorData.alarme.desactiver = true;
+    sensorData.gacheporte.activer = false;
+    sensorData.gacheporte.desactiver = true;
 }
 
 void actionPortailOuverture()
@@ -65,8 +69,39 @@ void actionPortailFermeture()
     sensorData.portail.ouverture = false;
     sensorData.portail.fermeture = true;
 }
+void actionActiverAlarme()
+{
+    sensorData.alarme.activer = true;
+    sensorData.alarme.desactiver = false;
+}
+
+void actionDesactiverAlarme()
+{
+    sensorData.alarme.activer = false;
+    sensorData.alarme.desactiver = true;
+}
 
 void actionGoControlPanel()
 {
     actionChangeScreen(5);
+}
+
+void actionGoGestionCartes()
+{
+    actionChangeScreen(6);
+}
+
+void actionAjouterCarte()
+{
+    demarrerAjoutCarte();
+}
+
+void actionSupprimerCarte()
+{
+    demarrerSuppressionCarte();
+}
+
+void actionAnnulerModeRfid()
+{
+    annulerModeRfid();
 }

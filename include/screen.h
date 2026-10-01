@@ -20,7 +20,8 @@ enum DkScreenId
   DK_SCREEN_2,
   DK_SCREEN_3,
   DK_SCREEN_4,
-  DK_SCREEN_5
+  DK_SCREEN_5,
+  DK_SCREEN_6   // Gestion des cartes RFID
 };
 
 

@@ -4,7 +4,7 @@ SensorData sensorData;
 ScreenElement screenElement = {};
 
 void addButton(const Button &button) {
-    if (screenElement.count >= 10) {
+    if (screenElement.count >= MAX_BUTTONS) {
         Serial.println("Button list is full");
         return;
     }

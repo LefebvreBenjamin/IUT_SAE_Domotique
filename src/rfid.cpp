@@ -29,7 +29,7 @@ void initRfid(){
 }
 
 void verifierRfid(){
-    // Pas de nouvelle carte
+  // Pas de nouvelle carte
   if (!rfid.PICC_IsNewCardPresent())
     return;
 
@@ -45,7 +45,6 @@ void verifierRfid(){
     Serial.print(rfid.uid.uidByte[i], HEX);
     Serial.print(" ");
   }
-
   Serial.println();
 
   // Afficher le type de carte
@@ -54,10 +53,12 @@ void verifierRfid(){
   Serial.print("Type : ");
   Serial.println(rfid.PICC_GetTypeName(type));
 
+  // Liste des cartes autorisees / modes ajout et suppression
+  if (traiterCarteRfid(rfid.uid.uidByte, rfid.uid.size))
+  {
+    actionActiverGachePorte();
+  }
+
   rfid.PICC_HaltA();
   rfid.PCD_StopCrypto1();
-
 }
-
-
-

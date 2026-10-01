@@ -1,4 +1,5 @@
 #include "screen.h"
+#include "cartesRfid.h"
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
@@ -9,9 +10,11 @@ static DkScreenId g_screen = DK_SCREEN_3;
 static bool g_dirty = true;
 static uint32_t g_lastDrawMs = 0;
 static uint32_t g_lastDrawVarMs = 0;
+static uint32_t g_lastCartesVersion = 0xFFFFFFFF;
 
 void drawCurrentScreen();
 static void drawDashboardVariable();
+static void drawGestionCartesVariable();
 void handleUiActions();
 
 static void drawCenteredText(const char *text, int16_t x, int16_t y)
@@ -35,16 +38,26 @@ void initScreen()
   //HOMZ MENUZ
   addButton({22, 128, 80, 28, actionGoDashboard, (int)DK_SCREEN_0});
   addButton({214, 128, 80, 28, actionGoControlPanel, (int)DK_SCREEN_0});
+  addButton({120, 128, 80, 28, actionGoGestionCartes, (int)DK_SCREEN_0});
 
   //CONTROL PANEL
   addButton({12, 16, 87, 31, actionGoHome, (int)DK_SCREEN_5}); //HOME
+
   addButton({218, 207, 60, 17, actionVoletDescendre, (int)DK_SCREEN_5}); // Vloet Descend
   addButton({129, 207, 60, 17, actionVoletStop, (int)DK_SCREEN_5}); //Volet Stop
   addButton({35, 207, 60, 17, actionVoletMonter, (int)DK_SCREEN_5}); //Volet Monter
+
   addButton({17, 156, 63, 21, actionActiverAlarme, (int)DK_SCREEN_5}); //Alarme Activer
   addButton({87, 156, 63, 21, actionDesactiverAlarme, (int)DK_SCREEN_5}); //Alarme Desactiver
-  addButton({87, 93, 63, 21, actionPortailFermeture, (int)DK_SCREEN_5}); //Portail Fermeture
-  addButton({17, 93, 63, 21, actionPortailOuverture, (int)DK_SCREEN_5}); //Portail Ouverture
+
+  addButton({87, 93, 63, 21, actionPortailFermeture, (int)DK_SCREEN_5}); //Gache Porte Fermeture
+  addButton({17, 93, 63, 21, actionPortailOuverture, (int)DK_SCREEN_5}); //Gache Porte Ouverture
+
+  //GESTION CARTES RFID
+  addButton({12, 16, 87, 31, actionGoHome, (int)DK_SCREEN_6});              //HOME
+  addButton({205, 90, 100, 30, actionAjouterCarte, (int)DK_SCREEN_6});      //Ajouter
+  addButton({205, 130, 100, 30, actionSupprimerCarte, (int)DK_SCREEN_6});   //Supprimer
+  addButton({205, 170, 100, 30, actionAnnulerModeRfid, (int)DK_SCREEN_6});  //Annuler
 
 
 
@@ -66,6 +79,12 @@ void updateScreen()
     drawCurrentScreen();
     g_dirty = false;
     g_lastDrawMs = millis();
+    g_lastCartesVersion = 0xFFFFFFFF; // force le redessin des zones dynamiques
+  }
+  if (g_screen == DK_SCREEN_6 && getVersionCartesRfid() != g_lastCartesVersion)
+  {
+    drawGestionCartesVariable();
+    g_lastCartesVersion = getVersionCartesRfid();
   }
   if (g_screen == DK_SCREEN_3 && (millis() - g_lastDrawVarMs) > 100)
   {
@@ -162,6 +181,12 @@ void drawHomeScreen()
   tft.setTextColor(NOIR);
   tft.setTextSize(1);
   drawCenteredText("DASHBOARD", 62, 142);
+
+  tft.fillRoundRect(120, 128, 80, 28, 6, BLANC);
+  tft.drawRoundRect(120, 128, 80, 28, 6, NOIR);
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1);
+  drawCenteredText("CARTES RFID", 160, 142);
 
   // Action: goto screen DK_SCREEN_3 (trigger from your input handler)
   tft.fillRoundRect(214, 128, 80, 28, 6, BLANC);
@@ -345,13 +370,13 @@ static void drawDashboardVariable()
 
   // Statuts
   tft.fillRect(275, 83, 20, 50, DK_BG);
-  if (sensorData.portail.ouverture)
+  if (sensorData.gacheporte.activer)
   {
-    tft.fillCircle(285, 100, 6, VERT); // Porte
+    tft.fillCircle(285, 100, 6, VERT); // Portail
   }
   else
   {
-    tft.fillCircle(285, 100, 6, ROUGE); // Porte
+    tft.fillCircle(285, 100, 6, ROUGE); // Portail
   }
 
   if (sensorData.alarme.activer)
@@ -439,8 +464,8 @@ void drawControlPannel()
   tft.drawRoundRect(12, 122, 144, 60, 4, NOIR);
   tft.setTextColor(NOIR);
   tft.setTextSize(1);
-  tft.setCursor(65, 126);
-  tft.print("Alarme");
+  tft.setCursor(45, 126);
+  tft.print("Gache Porte");
 
   tft.fillRoundRect(87, 156, 63, 21, 6, BLANC);
   tft.drawRoundRect(87, 156, 63, 21, 6, NOIR);
@@ -518,6 +543,72 @@ void drawControlPannel()
   tft.drawRoundRect(217, 16, 87, 31, 4, NOIR);
 }
 
+void drawGestionCartes()
+{
+  tft.fillScreen(DK_BG);
+
+  // === TITRE & HOME ===
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1);
+  tft.setCursor(124, 25);
+  tft.print("CARTES RFID");
+  tft.drawRoundRect(112, 16, 97, 31, 4, NOIR);
+
+  tft.fillRoundRect(12, 16, 87, 31, 6, BLANC);
+  tft.drawRoundRect(12, 16, 87, 31, 6, NOIR);
+  drawCenteredText("HOME", 55, 31);
+
+  // === LISTE DES CARTES (contenu dans drawGestionCartesVariable) ===
+  tft.drawRoundRect(12, 86, 185, 124, 4, NOIR);
+
+  // === BOUTONS ===
+  tft.fillRoundRect(205, 90, 100, 30, 6, BLANC);
+  tft.drawRoundRect(205, 90, 100, 30, 6, NOIR);
+  drawCenteredText("AJOUTER", 255, 105);
+
+  tft.fillRoundRect(205, 130, 100, 30, 6, BLANC);
+  tft.drawRoundRect(205, 130, 100, 30, 6, NOIR);
+  drawCenteredText("SUPPRIMER", 255, 145);
+
+  tft.fillRoundRect(205, 170, 100, 30, 6, BLANC);
+  tft.drawRoundRect(205, 170, 100, 30, 6, NOIR);
+  drawCenteredText("ANNULER", 255, 185);
+}
+
+static void drawGestionCartesVariable()
+{
+  char ligne[48];
+  char uid[24];
+  CarteRfid carte;
+
+  // Fond explicite : on ecrase l'ancien texte sans effacer la zone (pas de clignotement)
+  tft.setTextColor(NOIR, DK_BG);
+  tft.setTextSize(1);
+
+  snprintf(ligne, sizeof(ligne), "Cartes : %d/%d   ", getNombreCartes(), MAX_CARTES);
+  tft.setCursor(12, 58);
+  tft.print(ligne);
+
+  snprintf(ligne, sizeof(ligne), "%-40s", getMessageRfid());
+  tft.setCursor(12, 72);
+  tft.print(ligne);
+
+  for (int i = 0; i < MAX_CARTES; i++)
+  {
+    if (getCarte(i, carte))
+    {
+      formatUid(carte, uid, sizeof(uid));
+      snprintf(ligne, sizeof(ligne), "%2d. %-21s", i + 1, uid);
+    }
+    else
+    {
+      snprintf(ligne, sizeof(ligne), "%-25s", "");
+    }
+    tft.setCursor(16, 92 + (i * 11));
+    tft.print(ligne);
+  }
+}
+
 void drawCurrentScreen()
 {
   switch (g_screen)
@@ -539,6 +630,9 @@ void drawCurrentScreen()
     break;
   case DK_SCREEN_5:
     drawControlPannel();
+    break;
+  case DK_SCREEN_6:
+    drawGestionCartes();
     break;
   }
 }
@@ -585,7 +679,7 @@ void handleUiActions()
 
 void loadScreen(int num)
 {
-  const int maxScreen = 5;
+  const int maxScreen = 6;
   if (num < 0)
     num = 0;
   if (num > maxScreen)
