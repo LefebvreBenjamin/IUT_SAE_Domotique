@@ -1,6 +1,6 @@
 #include <XPT2046_Touchscreen.h>
 #include <SPI.h>
-#include "sensorData.h"
+#include "SensorData.h"
 
 
 #define CS_TACTIL  4

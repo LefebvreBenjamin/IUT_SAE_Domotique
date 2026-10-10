@@ -23,4 +23,8 @@ void updateBMP280Data() {
   sensorData.temperature = bmp.readTemperature();
   sensorData.pressure = bmp.readPressure() / 100.0F;
   sensorData.altitude = bmp.readAltitude(1013.25);
+
+
+
+
 }
