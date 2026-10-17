@@ -228,12 +228,13 @@ void drawDashboardScreen()
   tft.setTextColor(NOIR);
   tft.setTextSize(1);
   tft.setCursor(125, 120);
-  tft.print("Qualité");
+  tft.print("Qualite");
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
-  tft.setCursor(212, 14);
-  tft.print("Connected");
+  
+  
+  
+  
+  
 
   // tft.drawRGBBitmap(298, 13, icon_wifi_1_el_ur9q8wxw3, 16, 16);
   /*
@@ -311,6 +312,31 @@ void drawDashboardScreen()
 
 static void drawDashboardVariable()
 {
+
+  tft.fillRect(210, 12, 100, 12, DK_BG);   // efface la zone
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1);
+  tft.setCursor(212, 14);
+  if(connectedDevices.networkConnection && !connectedDevices.zigbeeConnection){
+    tft.setTextColor(ST77XX_ORANGE);
+    tft.print("Connected");
+  }
+  else if (connectedDevices.zigbeeConnection && !connectedDevices.networkConnection)
+  {
+    tft.setTextColor(ST77XX_ORANGE);
+    tft.print("Connected");
+  }
+  else if (connectedDevices.networkConnection && connectedDevices.zigbeeConnection)
+  {
+    tft.setTextColor(ST77XX_GREEN);
+    tft.print("Connected");
+  }
+  else
+  {
+     tft.setTextColor(ST77XX_RED);
+     tft.print("Disconnected");
+  }
+
   tft.fillRect(19, 98, 65, 56, DK_BG);
   tft.setTextColor(NOIR);
   tft.setTextSize(1);
@@ -327,10 +353,18 @@ static void drawDashboardVariable()
   tft.setCursor(19, 145);
   tft.printf("%.2f hPa", sensorData.pressure);
 
+  tft.fillRect(210, 26, 100, 12, DK_BG);   // efface la zone
   tft.setTextColor(NOIR);
   tft.setTextSize(1);
   tft.setCursor(212, 28);
-  tft.printf("%d:%d %d/%d/%d", timeDate.heure, timeDate.minute, timeDate.jour, timeDate.mois, timeDate.annee);
+  tft.printf("%d:%02d %d/%d/%d", timeDate.heure, timeDate.minute, timeDate.jour, timeDate.mois, timeDate.annee);
+
+    // ppm sous la qualité de l'air
+  tft.fillRect(119, 140, 82, 16, DK_BG);
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1);
+  tft.setCursor(125, 145);
+  tft.printf("%.2f ppm", sensorData.gasPpm);
 
   // Statuts
   tft.fillRect(275, 83, 20, 50, DK_BG);
@@ -369,18 +403,17 @@ static void drawDashboardVariable()
 
   // environement
   tft.fillRect(165, 78, 20, 50, DK_BG);
-  tft.fillCircle(180, 123, 6, NOIR); // Air
   if (sensorData.airQuality.good)
   {
-    tft.fillCircle(180, 120, 6, VERT); // Air
+    tft.fillCircle(180, 123, 6, VERT); // Air
   }
   else if (sensorData.airQuality.moderate)
   {
-    tft.fillCircle(180, 120, 6, JAUNE); // Air
+    tft.fillCircle(180, 123, 6, JAUNE); // Air
   }
   else if (sensorData.airQuality.bad)
   {
-    tft.fillCircle(180, 120, 6, ROUGE); // Air
+    tft.fillCircle(180, 123, 6, ROUGE); // Air
   }
 }
 

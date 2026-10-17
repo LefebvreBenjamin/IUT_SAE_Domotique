@@ -1,6 +1,7 @@
 #include "SensorData.h"
 
 SensorData sensorData;
+ConnectedDevices connectedDevices;
 ScreenElement screenElement = {};
 TimeDate timeDate = {};
 

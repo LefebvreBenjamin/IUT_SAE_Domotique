@@ -10,10 +10,10 @@ struct SensorData
   float pressure;
   float light;
   float gasVoltage;
+  float gasPpm;
   float altitude;
 
-  struct AirQuality
-  {
+  struct AirQuality {
     bool good;
     bool moderate;
     bool bad;
@@ -43,6 +43,12 @@ struct SensorData
     bool Stop;
     bool Descendre;
   } voletRoulant;
+};
+
+struct ConnectedDevices
+{
+  int networkConnection;
+  int zigbeeConnection;
 };
 
 typedef struct Button
@@ -75,6 +81,7 @@ struct TimeDate
 
 extern ScreenElement screenElement;
 extern SensorData sensorData;
+extern ConnectedDevices connectedDevices;
 extern TimeDate timeDate;
 
 void addButton(const Button &button);

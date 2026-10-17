@@ -41,11 +41,13 @@ void updateMQTT()
         {
             Serial.println("MQTT connecte !");
             publierMesure("temperature", 25.0);
+            connectedDevices.zigbeeConnection = 1;
         }
         else
         {
             Serial.print("Echec MQTT, code : ");
             Serial.println(mqttClient.state());
+            connectedDevices.zigbeeConnection = 0;
         }
     }
     else
