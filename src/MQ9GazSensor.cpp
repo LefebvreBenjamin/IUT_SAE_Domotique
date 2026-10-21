@@ -8,7 +8,7 @@ MQUnifiedsensor mq9("ESP32-C6", 3.3, 12, MQ9_ADC_PIN, "MQ-9");
 
 const float VCC_CAPTEUR = 5.0;      // alim du capteur (V)
 const float RL = 10000.0;           // résistance de charge (ohms)
-const float FACTEUR_DIV = 1.0;      // (R1+R2)/R2 du pont diviseur, 1.0 si pas de pont
+const float FACTEUR_DIV = 1.5;      // (R1+R2)/R2 du pont diviseur, 1.0 si pas de pont
 const float RATIO_AIR_PUR = 9.6;    // Rs/R0 dans l'air pur (datasheet)
 
 // Courbe du CO : ppm = A * (Rs/R0)^B

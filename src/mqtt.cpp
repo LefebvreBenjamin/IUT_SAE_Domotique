@@ -22,11 +22,11 @@ namespace
 
 void initMQTT()
 {
-    mqttClient.setServer(mqttServeur, mqttPort);
+    //mqttClient.setServer(mqttServeur, mqttPort);
 }
 
 void updateMQTT()
-{
+{/*
     if (WiFi.status() != WL_CONNECTED)
         return;
 
@@ -54,7 +54,7 @@ void updateMQTT()
     {
         mqttClient.loop();
         sendTrame();
-    }
+    }*/
 }
 
 
