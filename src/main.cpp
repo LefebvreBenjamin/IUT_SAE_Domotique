@@ -12,6 +12,7 @@
 #include "gachePorte.h"
 #include "time_et_tempo_EDF.h"
 #include "mqtt.h"
+#include "rgb.h"
 
 void setup() {
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
@@ -43,6 +44,7 @@ void setup() {
   initBH1750();
   initGachePorte();
   initMQTT();
+  initLed();
 
   initEdf();
 
@@ -73,5 +75,4 @@ void loop() {
   digitalWrite(CS_TACTIL, 0);
   updateTouchScreen();
   updateMQTT();
-
 }
