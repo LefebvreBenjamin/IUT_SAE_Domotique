@@ -72,6 +72,10 @@ void initEdf()
 // Met à jour l'heure et la date
 void updateTimer()
 {
+    // Une fois par seconde suffit
+    static unsigned long derniereMaj = 0;
+    if (millis() - derniereMaj < 1000) return;
+    derniereMaj = millis();
   
     if (WiFi.status() == WL_CONNECTED)   // 3 = connecté
     {
@@ -88,7 +92,7 @@ void updateTimer()
     
     
     struct tm heureLocale;
-    if (getLocalTime(&heureLocale, 10000))
+    if (getLocalTime(&heureLocale, 0))   // 0 = ne bloque pas
     {
         timeDate.heure = heureLocale.tm_hour;
         timeDate.minute = heureLocale.tm_min;

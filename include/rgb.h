@@ -7,3 +7,4 @@
 
 void initLed();
 void setLed(uint8_t r, uint8_t g, uint8_t b);
+void setLuminosite(uint8_t pourcent);   // 0 à 100 %

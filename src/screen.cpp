@@ -1,5 +1,6 @@
 #include "screen.h"
 #include "cartesRfid.h"
+#include "rgb.h"
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
@@ -59,6 +60,7 @@ void moveSlider(int x, int y)
   tft.printf("%d%%", *percent);
   tft.drawRoundRect(168, trackY, 98, 10, 5, NOIR);
   tft.fillCircle(map(*percent, 0, 100, 172, 262), trackY + 5, 4, NOIR);
+  if (percent == &eclairagePercent) setLuminosite(*percent);   // Slider éclairage seulement
 }
 
 
@@ -494,6 +496,7 @@ void drawControlPannel()
   tft.printf("%d%%", eclairagePercent);
   tft.drawRoundRect(168, 142, 98, 10, 5, NOIR);
   tft.fillCircle(map(eclairagePercent, 0, 100, 172, 262), 147, 4, NOIR);
+  
 
   // === VOLET ROULANT ===
   tft.drawRoundRect(13, 187, 292, 45, 4, NOIR);
