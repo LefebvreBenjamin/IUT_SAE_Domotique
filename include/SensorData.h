@@ -47,7 +47,6 @@ struct SensorData
 
 struct ConnectedDevices
 {
-  int networkConnection;
   int zigbeeConnection;
 };
 

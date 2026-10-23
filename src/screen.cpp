@@ -319,20 +319,12 @@ static void drawDashboardVariable()
   tft.setTextColor(NOIR);
   tft.setTextSize(1);
   tft.setCursor(212, 14);
-  if(connectedDevices.networkConnection && !connectedDevices.zigbeeConnection){
-    tft.setTextColor(ST77XX_ORANGE);
-    tft.print("Connected");
-  }
-  else if (connectedDevices.zigbeeConnection && !connectedDevices.networkConnection)
-  {
-    tft.setTextColor(ST77XX_ORANGE);
-    tft.print("Connected");
-  }
-  else if (connectedDevices.networkConnection && connectedDevices.zigbeeConnection)
-  {
+
+  if(connectedDevices.zigbeeConnection){
     tft.setTextColor(ST77XX_GREEN);
     tft.print("Connected");
   }
+
   else
   {
      tft.setTextColor(ST77XX_RED);

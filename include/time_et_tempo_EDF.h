@@ -1,9 +1,8 @@
+#pragma once
 #include "SensorData.h"
-#include <WiFi.h>
-#include <WiFiClientSecure.h>
-#include <ArduinoJson.h>
-#include "time.h"
-#include <Preferences.h>
+#include <time.h>
+
+#define FUSEAU_PARIS "CET-1CEST,M3.5.0,M10.5.0/3"
 
 void initEdf();
 void updateTimer();
