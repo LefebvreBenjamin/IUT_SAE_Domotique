@@ -11,7 +11,7 @@
 #include "tactilScreen.h"
 #include "gachePorte.h"
 #include "time_et_tempo_EDF.h"
-#include "mqtt.h"
+#include "zigbeeLink.h"
 #include "rgb.h"
 
 void setup() {
@@ -43,11 +43,10 @@ void setup() {
   initBMP280();
   initBH1750();
   initGachePorte();
-  initMQTT();
   initLed();
 
   initEdf();
-
+  initZigbee();
 
   delay(500);
 }
@@ -74,5 +73,6 @@ void loop() {
   digitalWrite(TFT_CS, 1);
   digitalWrite(CS_TACTIL, 0);
   updateTouchScreen();
-  updateMQTT();
+  updateZigbee();  
+
 }
