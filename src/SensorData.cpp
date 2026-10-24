@@ -4,6 +4,7 @@ SensorData sensorData;
 ConnectedDevices connectedDevices;
 ScreenElement screenElement = {};
 TimeDate timeDate = {};
+TempoEdf tempoEdf = {};
 
 void addButton(const Button &button) {
     if (screenElement.count >= MAX_BUTTONS) {
@@ -13,4 +14,4 @@ void addButton(const Button &button) {
 
     screenElement.button[screenElement.count] = button;
     screenElement.count++;
-}
+}

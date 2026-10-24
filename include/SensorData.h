@@ -78,9 +78,17 @@ struct TimeDate
   int annee;
 };
 
+// Couleurs Tempo EDF (TEMPO_BLEU, TEMPO_BLANC...)
+struct TempoEdf
+{
+  int couleurJour;
+  int couleurDemain;
+};
+
 extern ScreenElement screenElement;
 extern SensorData sensorData;
 extern ConnectedDevices connectedDevices;
 extern TimeDate timeDate;
+extern TempoEdf tempoEdf;
 
-void addButton(const Button &button);
+void addButton(const Button &button);

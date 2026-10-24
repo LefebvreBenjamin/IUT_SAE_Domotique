@@ -65,7 +65,8 @@ void loop() {
   updateGachePorte();
 
   updateTimer();
-  
+  updateTempo();
+
   digitalWrite(SS_PIN, 1);
   digitalWrite(TFT_CS, 0);
   updateScreen();
@@ -75,4 +76,4 @@ void loop() {
   updateTouchScreen();
   updateZigbee();  
 
-}
+}

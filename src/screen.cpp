@@ -1,6 +1,7 @@
 #include "screen.h"
 #include "cartesRfid.h"
 #include "rgb.h"
+#include "time_et_tempo_EDF.h"
 
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
@@ -12,9 +13,18 @@ static bool g_dirty = true;
 static uint32_t g_lastDrawMs = 0;
 static uint32_t g_lastDrawVarMs = 0;
 static uint32_t g_lastCartesVersion = 0xFFFFFFFF;
+static bool g_tempoForce = true;   // vrai = redessiner la zone Tempo
+
+// Barre Tempo du dashboard : 6h -> 22h -> 6h
+#define TEMPO_X  15    // x de 6h
+#define TEMPO_L  288   // 24 h = 288 px (12 px par heure)
+#define TEMPO_HP 192   // 16 h pleines
+#define TEMPO_Y  209   // haut de la barre
+#define TEMPO_H  7     // hauteur de la barre
 
 void drawCurrentScreen();
 static void drawDashboardVariable();
+static void drawTempoDashboard();
 static void drawGestionCartesVariable();
 void handleUiActions();
 
@@ -310,6 +320,8 @@ void drawDashboardScreen()
   tft.setTextSize(1);
   tft.setCursor(148, 68);
   tft.print("Air");
+
+  g_tempoForce = true;   // ecran efface : on redessine le Tempo
 }
 
 static void drawDashboardVariable()
@@ -408,6 +420,117 @@ static void drawDashboardVariable()
   else if (sensorData.airQuality.bad)
   {
     tft.fillCircle(180, 123, 6, ROUGE); // Air
+  }
+
+  drawTempoDashboard();
+}
+
+// Couleur heures pleines d'un jour Tempo
+static uint16_t couleurTempoHP(int couleur)
+{
+  switch (couleur)
+  {
+  case TEMPO_BLEU:  return 0x1B3C;   // bleu
+  case TEMPO_BLANC: return BLANC;
+  case TEMPO_ROUGE: return ROUGE;
+  default:          return 0x8410;   // gris = inconnue
+  }
+}
+
+// Couleur heures creuses (plus claire)
+static uint16_t couleurTempoHC(int couleur)
+{
+  switch (couleur)
+  {
+  case TEMPO_BLEU:  return 0x95FF;   // bleu clair
+  case TEMPO_BLANC: return 0xCE59;   // gris clair
+  case TEMPO_ROUGE: return 0xFD14;   // rouge clair
+  default:          return 0xC618;   // gris clair
+  }
+}
+
+static const char *nomTempo(int couleur)
+{
+  switch (couleur)
+  {
+  case TEMPO_BLEU:  return "BLEU";
+  case TEMPO_BLANC: return "BLANC";
+  case TEMPO_ROUGE: return "ROUGE";
+  default:          return "?";
+  }
+}
+
+// Petit carre de couleur avec un contour
+static void carreTempo(int x, int y, int couleur)
+{
+  tft.fillRect(x, y, 8, 8, couleurTempoHP(couleur));
+  tft.drawRect(x, y, 8, 8, NOIR);
+}
+
+// Zone Tempo en bas du dashboard
+// Redessinee seulement si la minute ou les couleurs changent
+static void drawTempoDashboard()
+{
+  static int derniereMinute = -1;
+  static int dernierJour = -1;
+  static int dernierDemain = -1;
+
+  if (!g_tempoForce && timeDate.minute == derniereMinute &&
+      tempoEdf.couleurJour == dernierJour && tempoEdf.couleurDemain == dernierDemain)
+    return;
+
+  g_tempoForce = false;
+  derniereMinute = timeDate.minute;
+  dernierJour = tempoEdf.couleurJour;
+  dernierDemain = tempoEdf.couleurDemain;
+
+  bool heureOk = timeDate.annee >= 2024;              // heure deja recue ?
+  bool hp = timeDate.heure >= 6 && timeDate.heure < 22;
+
+  tft.fillRect(8, 185, 304, 37, DK_BG);   // efface la zone
+  tft.setTextColor(NOIR);
+  tft.setTextSize(1);
+
+  // Ligne du haut : aujourd'hui, demain, HP/HC
+  tft.setCursor(15, 188);
+  tft.print("Tempo");
+  carreTempo(60, 188, tempoEdf.couleurJour);
+  tft.setCursor(72, 188);
+  tft.printf("Auj. %s", nomTempo(tempoEdf.couleurJour));
+  carreTempo(150, 188, tempoEdf.couleurDemain);
+  tft.setCursor(162, 188);
+  tft.printf("Dem. %s", nomTempo(tempoEdf.couleurDemain));
+  if (heureOk)
+  {
+    tft.setCursor(279, 188);
+    tft.print(hp ? "En HP" : "En HC");
+  }
+
+  // Heures au-dessus des traits
+  tft.setCursor(TEMPO_X, 198);
+  tft.print("6h");
+  tft.setCursor(TEMPO_X + TEMPO_HP - 9, 198);
+  tft.print("22h");
+  tft.setCursor(TEMPO_X + TEMPO_L - 12, 198);
+  tft.print("6h");
+
+  // Barre : heures pleines puis heures creuses
+  tft.fillRect(TEMPO_X, TEMPO_Y, TEMPO_HP, TEMPO_H, couleurTempoHP(tempoEdf.couleurJour));
+  tft.fillRect(TEMPO_X + TEMPO_HP, TEMPO_Y, TEMPO_L - TEMPO_HP, TEMPO_H, couleurTempoHC(tempoEdf.couleurJour));
+  tft.drawRect(TEMPO_X, TEMPO_Y, TEMPO_L + 1, TEMPO_H, NOIR);
+
+  // Traits a 6h, 22h et 6h
+  tft.drawFastVLine(TEMPO_X, TEMPO_Y - 2, TEMPO_H + 4, NOIR);
+  tft.drawFastVLine(TEMPO_X + TEMPO_HP, TEMPO_Y - 2, TEMPO_H + 4, NOIR);
+  tft.drawFastVLine(TEMPO_X + TEMPO_L, TEMPO_Y - 2, TEMPO_H + 4, NOIR);
+
+  // Curseur de l'heure actuelle
+  if (heureOk)
+  {
+    int m = (timeDate.heure * 60 + timeDate.minute - 360 + 1440) % 1440;   // minutes depuis 6h
+    int x = TEMPO_X + m / 5;                                                // 1440 min -> 288 px
+    tft.fillTriangle(x - 3, TEMPO_Y - 6, x + 3, TEMPO_Y - 6, x, TEMPO_Y - 1, NOIR);
+    tft.fillRect(x - 1, TEMPO_Y - 1, 3, TEMPO_H + 4, NOIR);
   }
 }
 

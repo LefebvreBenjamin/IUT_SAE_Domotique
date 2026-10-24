@@ -5,10 +5,11 @@
 #include "time_et_tempo_EDF.h"
 #include <sys/time.h>
 #include <Preferences.h>
+#include <esp_coexist.h>
 
 // +1 a chaque ajout ou retrait de capteur Zigbee
 // (l'ESP efface alors sa memoire Zigbee une fois)
-#define ZB_VERSION_MODELE 3
+#define ZB_VERSION_MODELE 5
 
 // Capteur temperature (endpoint 10)
 ZigbeeTempSensor zbTemp(10);
@@ -21,6 +22,11 @@ ZigbeeIlluminanceSensor zbLux(12);
 
 // Gaz MQ-9 en ppm (endpoint 13)
 ZigbeeAnalog zbGaz(13);
+
+// Couleurs Tempo : aujourd'hui (endpoint 14) et demain (endpoint 15)
+// 0 = inconnue, 1 = bleu, 2 = blanc, 3 = rouge
+ZigbeeMultistate zbTempoJour(14);
+ZigbeeMultistate zbTempoDemain(15);
 
 // Lux -> format Zigbee (10000 x log10(lux) + 1)
 static uint16_t luxVersZigbee(float lux) {
@@ -63,6 +69,20 @@ void initZigbee() {
   zbGaz.setAnalogInputResolution(1);
   Zigbee.addEndpoint(&zbGaz);
 
+  // Tempo du jour (4 etats)
+  zbTempoJour.setManufacturerAndModel("DIY", "StationC6");
+  zbTempoJour.addMultistateInput();
+  zbTempoJour.setMultistateInputDescription("Tempo jour");
+  zbTempoJour.setMultistateInputStates(4);
+  Zigbee.addEndpoint(&zbTempoJour);
+
+  // Tempo de demain (4 etats)
+  zbTempoDemain.setManufacturerAndModel("DIY", "StationC6");
+  zbTempoDemain.addMultistateInput();
+  zbTempoDemain.setMultistateInputDescription("Tempo demain");
+  zbTempoDemain.setMultistateInputStates(4);
+  Zigbee.addEndpoint(&zbTempoDemain);
+
   // Capteurs changes ? On efface la memoire Zigbee
   // (les cartes RFID ne sont pas touchees)
   Preferences memo;
@@ -81,6 +101,14 @@ void initZigbee() {
   memo.putInt("modele", ZB_VERSION_MODELE);
   memo.end();
   Serial.println("Zigbee : demarre");
+
+  // WiFi et Zigbee partagent la meme radio :
+  // sans cette ligne, le Zigbee la garde et le WiFi ne passe plus
+#if CONFIG_ESP_COEX_SW_COEXIST_ENABLE && CONFIG_SOC_IEEE802154_SUPPORTED
+  if (esp_coex_wifi_i154_enable() == ESP_OK) {
+    Serial.println("Zigbee : partage radio WiFi active");
+  }
+#endif
 }
 
 
@@ -151,6 +179,12 @@ void updateZigbee() {
     zbGaz.setAnalogInput(sensorData.gasPpm);
     zbGaz.reportAnalogInput();
   }
+
+  // Couleurs Tempo
+  zbTempoJour.setMultistateInput(tempoEdf.couleurJour);
+  zbTempoJour.reportMultistateInput();
+  zbTempoDemain.setMultistateInput(tempoEdf.couleurDemain);
+  zbTempoDemain.reportMultistateInput();
 
   Serial.println("Zigbee : envoi");
 }
