@@ -43,6 +43,11 @@ struct SensorData
     bool Stop;
     bool Descendre;
   } voletRoulant;
+
+  struct Esp32Data{
+    int cpuSpeed;
+    float cpuTemp;
+  }esp32Data;
 };
 
 struct ConnectedDevices
@@ -91,4 +96,4 @@ extern ConnectedDevices connectedDevices;
 extern TimeDate timeDate;
 extern TempoEdf tempoEdf;
 
-void addButton(const Button &button);
+void addButton(const Button &button);

@@ -9,7 +9,7 @@
 
 // +1 a chaque ajout ou retrait de capteur Zigbee
 // (l'ESP efface alors sa memoire Zigbee une fois)
-#define ZB_VERSION_MODELE 5
+#define ZB_VERSION_MODELE 6
 
 // Capteur temperature (endpoint 10)
 ZigbeeTempSensor zbTemp(10);
@@ -27,6 +27,9 @@ ZigbeeAnalog zbGaz(13);
 // 0 = inconnue, 1 = bleu, 2 = blanc, 3 = rouge
 ZigbeeMultistate zbTempoJour(14);
 ZigbeeMultistate zbTempoDemain(15);
+
+// Capteur temperature CPU (endpoint 16)
+ZigbeeTempSensor zbCpuTemp(16);
 
 // Lux -> format Zigbee (10000 x log10(lux) + 1)
 static uint16_t luxVersZigbee(float lux) {
@@ -82,6 +85,12 @@ void initZigbee() {
   zbTempoDemain.setMultistateInputDescription("Tempo demain");
   zbTempoDemain.setMultistateInputStates(4);
   Zigbee.addEndpoint(&zbTempoDemain);
+
+  // Temp CPU 
+  zbCpuTemp.setManufacturerAndModel("DIY", "StationC6");
+  zbCpuTemp.setMinMaxValue(-10, 80);
+  zbCpuTemp.setTolerance(1);
+  Zigbee.addEndpoint(&zbCpuTemp);
 
   // Capteurs changes ? On efface la memoire Zigbee
   // (les cartes RFID ne sont pas touchees)
@@ -152,14 +161,20 @@ void updateZigbee() {
     Serial.println(heureOk ? "Zigbee : heure OK" : "Zigbee : pas d'heure");
   }
 
-  // Envoi toutes les 2 s
-  if (millis() - dernierEnvoi < 1000) return;
+  // Envoi toutes les 10 s
+  if (millis() - dernierEnvoi < 10000) return;
   dernierEnvoi = millis();
 
   // Temperature (si mesure valide)
   if (!isnan(sensorData.temperature)) {
     zbTemp.setTemperature(sensorData.temperature);
     zbTemp.report();
+  }
+
+  // Temperature CPU (si mesure valide)
+  if (!isnan(sensorData.esp32Data.cpuTemp)) {
+    zbCpuTemp.setTemperature(sensorData.esp32Data.cpuTemp);
+    zbCpuTemp.report();
   }
 
   // Pression en hPa (si mesure valide)
@@ -186,5 +201,5 @@ void updateZigbee() {
   zbTempoDemain.setMultistateInput(tempoEdf.couleurDemain);
   zbTempoDemain.reportMultistateInput();
 
-  Serial.println("Zigbee : envoi");
+  Serial.printf("Zigbee : envoi (CPU %.1f C)\n", sensorData.esp32Data.cpuTemp);
 }

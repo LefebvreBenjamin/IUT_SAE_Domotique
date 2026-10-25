@@ -28,7 +28,14 @@ export default {
     vendor: 'DIY',
     description: 'Station capteurs ESP32-C6 (SAE domotique)',
     extend: [
-        m.temperature(),   // endpoint 10
+        // 2 capteurs de temperature : on nomme leurs endpoints
+        m.deviceEndpoints({
+            endpoints: {ambiant: 10, cpu: 16},
+            // Valeurs uniques : jamais de suffixe d'endpoint (sinon pressure_11...)
+            multiEndpointSkip: ['pressure', 'illuminance', 'co'],
+        }),
+        // -> temperature_ambiant (BMP280) et temperature_cpu (puce ESP)
+        m.temperature({endpointNames: ['ambiant', 'cpu']}),
         m.pressure(),      // endpoint 11
         m.illuminance(),   // endpoint 12
         // Gaz MQ-9, endpoint 13 (valeur libre)
