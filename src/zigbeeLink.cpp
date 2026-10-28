@@ -101,15 +101,17 @@ void initZigbee() {
     Serial.println("Zigbee : capteurs changes, memoire Zigbee effacee");
   }
 
+  Zigbee.setTimeout(10000);
+
   // Demarrage
-  if (!Zigbee.begin(ZIGBEE_END_DEVICE, effacer)) {
-    memo.end();
-    Serial.println("Zigbee : erreur, redemarrage");
-    ESP.restart();
+  if (Zigbee.begin(ZIGBEE_END_DEVICE, effacer)) {
+    Serial.println("Zigbee : connecte");
+  } else {
+    // Raspberry hors de portee : la station marche sans
+    Serial.println("Zigbee : reseau absent, recherche en fond");
   }
   memo.putInt("modele", ZB_VERSION_MODELE);
   memo.end();
-  Serial.println("Zigbee : demarre");
 
   // WiFi et Zigbee partagent la meme radio :
   // sans cette ligne, le Zigbee la garde et le WiFi ne passe plus

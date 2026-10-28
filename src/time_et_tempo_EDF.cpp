@@ -37,11 +37,11 @@ Ne pas utiliser EEPROM.h sur ESP32 (usure de la Flash).
 #define DPRINTF(...)
 #endif
 
-// Reseaux WiFi connus : la station prend le plus fort
-// (ajoute une ligne par reseau, en 2,4 GHz)
-static const char *reseaux[][2] = {
+// Reseaux WiFi 
+static const char *reseaux[][3] = {
     {"POCOF8Pro", "motdepasse"},          // partage du telephone
     {"Freebox-1889A5", "5bmm7q99c9qvdf66qr7hnx"},    // box de la maison
+    {"SFR_4BFF", "2yer5a6yy2m4r3tk5e8d"},
 };
 static WiFiMulti wifiMulti;
 
