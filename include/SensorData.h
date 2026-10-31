@@ -45,7 +45,6 @@ struct SensorData
   } voletRoulant;
 
   struct Esp32Data{
-    int cpuSpeed;
     float cpuTemp;
   }esp32Data;
 };

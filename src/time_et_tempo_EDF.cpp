@@ -41,7 +41,7 @@ Ne pas utiliser EEPROM.h sur ESP32 (usure de la Flash).
 static const char *reseaux[][3] = {
     {"POCOF8Pro", "motdepasse"},          // partage du telephone
     {"Freebox-1889A5", "5bmm7q99c9qvdf66qr7hnx"},    // box de la maison
-    {"SFR_4BFF", "2yer5a6yy2m4r3tk5e8d"},
+    {"SFR_4BFF", "2yer5a6yy2m4r3tk5e8d"}, // box maison 2
 };
 static WiFiMulti wifiMulti;
 

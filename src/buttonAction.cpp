@@ -8,12 +8,12 @@ void actionChangeScreen(int screenNumber)
 
 void actionGoDashboard()
 {
-    actionChangeScreen(3);
+    actionChangeScreen(ECRAN_DASHBOARD);
 }
 
 void actionGoHome()
 {
-    actionChangeScreen(0);
+    actionChangeScreen(ECRAN_ACCUEIL);
 }
 
 void actionVoletDescendre()
@@ -81,12 +81,12 @@ void actionDesactiverAlarme()
 
 void actionGoControlPanel()
 {
-    actionChangeScreen(5);
+    actionChangeScreen(ECRAN_CONTROLE);
 }
 
 void actionGoGestionCartes()
 {
-    actionChangeScreen(6);
+    actionChangeScreen(ECRAN_CARTES);
 }
 
 void actionAjouterCarte()

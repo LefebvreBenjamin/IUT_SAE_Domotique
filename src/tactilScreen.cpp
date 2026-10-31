@@ -21,8 +21,8 @@ void updateTouchScreen()
         int y = map(p.y, 200, 3800, 240, 0);
 
 
-        // bouger le sliders dfe l avmc et de l eclairage
-        if (getCurrentScreen() == 5 && x >= 162 && x <= 266 &&
+        // Deplacer les sliders VMC et eclairage
+        if (getCurrentScreen() == ECRAN_CONTROLE && x >= 162 && x <= 266 &&
             ((y >= 74 && y <= 92) || (y >= 138 && y <= 156)))
         {
             digitalWrite(CS_TACTIL, HIGH);

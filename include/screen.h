@@ -13,15 +13,13 @@
 #define JAUNE 0xFFE0
 
 
-enum DkScreenId
+// Numeros des ecrans
+enum EcranId
 {
-  DK_SCREEN_0,
-  DK_SCREEN_1,
-  DK_SCREEN_2,
-  DK_SCREEN_3,
-  DK_SCREEN_4,
-  DK_SCREEN_5,
-  DK_SCREEN_6   // Gestion des cartes RFID
+  ECRAN_ACCUEIL = 0,
+  ECRAN_DASHBOARD = 3,
+  ECRAN_CONTROLE = 5,
+  ECRAN_CARTES = 6
 };
 
 

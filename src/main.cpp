@@ -15,42 +15,25 @@
 #include "rgb.h"
 #include "driver/temperature_sensor.h"
 
-// Capteur de temperature interne de l'ESP
-// (temperatureRead() d'Arduino est limite a 50 C : trop peu en boitier)
+// Temperature interne de l'ESP (-10 a 80 C)
+// temperatureRead() d'Arduino s'arrete a 50 C
 static temperature_sensor_handle_t capteurCpu = NULL;
 
 static void initTempCpu() {
   temperature_sensor_config_t cfg = TEMPERATURE_SENSOR_CONFIG_DEFAULT(-10, 80);
-  if (temperature_sensor_install(&cfg, &capteurCpu) != ESP_OK) {
-    Serial.println("Temp CPU : erreur installation");
-    capteurCpu = NULL;
-    return;
-  }
-  if (temperature_sensor_enable(capteurCpu) != ESP_OK) {
-    Serial.println("Temp CPU : erreur activation");
-    temperature_sensor_uninstall(capteurCpu);
-    capteurCpu = NULL;
-  }
+  temperature_sensor_install(&cfg, &capteurCpu);
+  temperature_sensor_enable(capteurCpu);
 }
 
-// NaN si la lecture echoue
+// NAN si la lecture rate
 static float lireTempCpu() {
-  float t = NAN;
-  if (capteurCpu == NULL) return NAN;
-  if (temperature_sensor_get_celsius(capteurCpu, &t) != ESP_OK) {
-    static bool dejaSignale = false;
-    if (!dejaSignale) {
-      Serial.println("Temp CPU : lecture impossible");
-      dejaSignale = true;
-    }
-    return NAN;
-  }
+  float t;
+  if (temperature_sensor_get_celsius(capteurCpu, &t) != ESP_OK) return NAN;
   return t;
 }
 
 void setup() {
-  sensorData.esp32Data.cpuSpeed = 80;
-  setCpuFrequencyMhz(sensorData.esp32Data.cpuSpeed);
+  setCpuFrequencyMhz(80);   // 80 MHz : moins de chauffe
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
   SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
   Serial.begin(115200);

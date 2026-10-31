@@ -8,7 +8,7 @@ Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 static const uint16_t DK_BG = 0xFFFF;
 
 
-static DkScreenId g_screen = DK_SCREEN_3;
+static EcranId g_screen = ECRAN_DASHBOARD;
 static bool g_dirty = true;
 static uint32_t g_lastDrawMs = 0;
 static uint32_t g_lastDrawVarMs = 0;
@@ -80,31 +80,31 @@ void initScreen()
 {
   Serial.println("Init screen");
 
-  //DACHBOARDE
-  addButton({5, 13, 63, 30, actionGoHome, (int)DK_SCREEN_3});
+  // Dashboard
+  addButton({5, 13, 63, 30, actionGoHome, (int)ECRAN_DASHBOARD});
   
-  //HOMZ MENUZ
-  addButton({22, 128, 80, 28, actionGoDashboard, (int)DK_SCREEN_0});
-  addButton({214, 128, 80, 28, actionGoControlPanel, (int)DK_SCREEN_0});
-  addButton({120, 128, 80, 28, actionGoGestionCartes, (int)DK_SCREEN_0});
+  // Accueil
+  addButton({22, 128, 80, 28, actionGoDashboard, (int)ECRAN_ACCUEIL});
+  addButton({214, 128, 80, 28, actionGoControlPanel, (int)ECRAN_ACCUEIL});
+  addButton({120, 128, 80, 28, actionGoGestionCartes, (int)ECRAN_ACCUEIL});
 
-  //CONTROL PANEL
-  addButton({12, 16, 87, 31, actionGoHome, (int)DK_SCREEN_5}); //HOME
+  // Panneau de controle
+  addButton({12, 16, 87, 31, actionGoHome, (int)ECRAN_CONTROLE}); // Retour accueil
 
-  addButton({218, 207, 60, 17, actionVoletDescendre, (int)DK_SCREEN_5}); // Vloet Descend
-  addButton({129, 207, 60, 17, actionVoletStop, (int)DK_SCREEN_5}); //Volet Stop
-  addButton({35, 207, 60, 17, actionVoletMonter, (int)DK_SCREEN_5}); //Volet Monter
+  addButton({218, 207, 60, 17, actionVoletDescendre, (int)ECRAN_CONTROLE}); // Volet descendre
+  addButton({129, 207, 60, 17, actionVoletStop, (int)ECRAN_CONTROLE}); // Volet stop
+  addButton({35, 207, 60, 17, actionVoletMonter, (int)ECRAN_CONTROLE}); // Volet monter
 
-  addButton({17, 156, 63, 21, actionActiverAlarme, (int)DK_SCREEN_5}); //Alarme Activer
-  addButton({87, 156, 63, 21, actionDesactiverAlarme, (int)DK_SCREEN_5}); //Alarme Desactiver
+  addButton({17, 156, 63, 21, actionActiverAlarme, (int)ECRAN_CONTROLE}); // Alarme activer
+  addButton({87, 156, 63, 21, actionDesactiverAlarme, (int)ECRAN_CONTROLE}); // Alarme desactiver
 
-  addButton({17, 93, 133, 21, actionActiverGachePorte, (int)DK_SCREEN_5}); //Gache Porte Activer
+  addButton({17, 93, 133, 21, actionActiverGachePorte, (int)ECRAN_CONTROLE}); // Gache porte activer
 
-  //GESTION CARTES RFID
-  addButton({12, 16, 87, 31, actionGoHome, (int)DK_SCREEN_6});//HOME
-  addButton({205, 90, 100, 30, actionAjouterCarte, (int)DK_SCREEN_6});//Ajouter
-  addButton({205, 130, 100, 30, actionSupprimerCarte, (int)DK_SCREEN_6});//Supprimer
-  addButton({205, 170, 100, 30, actionAnnulerModeRfid, (int)DK_SCREEN_6});//Annuler
+  // Cartes RFID
+  addButton({12, 16, 87, 31, actionGoHome, (int)ECRAN_CARTES});// Retour accueil
+  addButton({205, 90, 100, 30, actionAjouterCarte, (int)ECRAN_CARTES});// Ajouter
+  addButton({205, 130, 100, 30, actionSupprimerCarte, (int)ECRAN_CARTES});// Supprimer
+  addButton({205, 170, 100, 30, actionAnnulerModeRfid, (int)ECRAN_CARTES});// Annuler
 
 
 
@@ -128,12 +128,12 @@ void updateScreen()
     g_lastDrawMs = millis();
     g_lastCartesVersion = 0xFFFFFFFF; // force le redessin des zones dynamiques
   }
-  if (g_screen == DK_SCREEN_6 && getVersionCartesRfid() != g_lastCartesVersion)
+  if (g_screen == ECRAN_CARTES && getVersionCartesRfid() != g_lastCartesVersion)
   {
     drawGestionCartesVariable();
     g_lastCartesVersion = getVersionCartesRfid();
   }
-  if (g_screen == DK_SCREEN_3 && (millis() - g_lastDrawVarMs) > 100)
+  if (g_screen == ECRAN_DASHBOARD && (millis() - g_lastDrawVarMs) > 100)
   {
     drawDashboardVariable();
     g_lastDrawVarMs = millis();
@@ -154,27 +154,20 @@ void drawHomeScreen()
 
   tft.fillRoundRect(22, 128, 80, 28, 6, BLANC);
   tft.drawRoundRect(22, 128, 80, 28, 6, NOIR);
-  tft.setTextColor(NOIR);
   tft.setTextSize(1);
   drawCenteredText("DASHBOARD", 62, 142);
 
   tft.fillRoundRect(120, 128, 80, 28, 6, BLANC);
   tft.drawRoundRect(120, 128, 80, 28, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("CARTES RFID", 160, 142);
 
-  // Action: goto screen DK_SCREEN_3 (trigger from your input handler)
+  // Bouton panneau de controle
   tft.fillRoundRect(214, 128, 80, 28, 6, BLANC);
   tft.drawRoundRect(214, 128, 80, 28, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(215, 138);
   tft.print("CONTROL PANEL");
 
-  // Action: goto screen DK_SCREEN_4 (trigger from your input handler)
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
+  // Heure et date
   tft.setCursor(110, 83);
   tft.printf("%d:%d %d/%d/%d", timeDate.heure, timeDate.minute, timeDate.jour, timeDate.mois, timeDate.annee);
 
@@ -199,15 +192,11 @@ void drawNowPlayingCard()
 
   tft.fillRoundRect(12, 40, 216, 110, 6, 0xFFFF);
   tft.drawRoundRect(12, 40, 216, 110, 6, 0xFFFF);
-  tft.setTextColor(0x10C4);
-  tft.setTextSize(1);
   tft.setCursor(16, 44);
   tft.print("Card");
 
   tft.fillRoundRect(24, 52, 64, 64, 4, 0xFFFF);
   tft.drawRoundRect(24, 52, 64, 64, 4, 0xFFFF);
-  tft.setTextColor(0x10C4);
-  tft.setTextSize(1);
   tft.setCursor(100, 58);
   tft.print("Track Name");
   tft.setCursor(100, 74);
@@ -232,13 +221,9 @@ void drawDashboardScreen()
 
   // tft.drawRGBBitmap(122, 117, icon_nuke_el_wc9q5tvoc, 16, 16);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(19, 98);
   // tft.printf("%.2f C", sensorData.temperature);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(125, 120);
   tft.print("Qualite");
 
@@ -257,13 +242,9 @@ void drawDashboardScreen()
 
   // tft.drawRGBBitmap(19, 162, icon_nuke_el_wc9q5tvoc, 16, 16);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(231, 123);
   tft.print("Alarme");
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(231, 150);
   tft.print("Volet");
 
@@ -272,52 +253,36 @@ void drawDashboardScreen()
   // tft.fillCircle(285, 160, 6, 0x10C4);
   // tft.drawRGBBitmap(20, 119, icon_temp_el_8iewusar9, 16, 16);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(19, 121);
   // tft.printf("%.2f lx", sensorData.light);
 
   // tft.drawRGBBitmap(20, 142, icon_temp_el_8iewusar9, 16, 16);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(19, 145);
   // tft.printf("%.2f hPa", sensorData.pressure);
 
   // tft.fillCircle(190, 125, 6, NOIR);
   tft.fillRoundRect(5, 13, 63, 30, 6, BLANC);
   tft.drawRoundRect(5, 13, 63, 30, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("HOME", 43, 28);
 
-  // Action: goto screen DK_SCREEN_0 (trigger from your input handler)
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
+  // Cadre statuts
   tft.setCursor(237, 68);
   tft.print("Statuts");
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(212, 28);
   tft.printf("%d:%d %d/%d/%d", timeDate.heure, timeDate.minute, timeDate.jour, timeDate.mois, timeDate.annee);
 
   tft.drawRoundRect(206, 8, 111, 40, 4, 0x10C4);
   tft.drawRoundRect(215, 64, 94, 117, 4, 0x10C4);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(233, 96);
   tft.print("Porte");
 
   tft.drawRoundRect(11, 64, 92, 117, 4, 0x10C4);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(19, 68);
   tft.print("Environnement");
 
   tft.drawRoundRect(114, 64, 92, 117, 4, 0x10C4);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(148, 68);
   tft.print("Air");
 
@@ -328,7 +293,6 @@ static void drawDashboardVariable()
 {
 
   tft.fillRect(210, 12, 100, 12, DK_BG);   // efface la zone
-  tft.setTextColor(NOIR);
   tft.setTextSize(1);
   tft.setCursor(212, 14);
 
@@ -345,30 +309,21 @@ static void drawDashboardVariable()
 
   tft.fillRect(19, 98, 65, 56, DK_BG);
   tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(19, 98);
   tft.printf("%.2f Celsius", sensorData.temperature);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(19, 121);
   tft.printf("%.2f lux", sensorData.light);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(19, 145);
   tft.printf("%.2f hPa", sensorData.pressure);
 
   tft.fillRect(210, 26, 100, 12, DK_BG);   // efface la zone
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(212, 28);
   tft.printf("%d:%02d %d/%d/%d", timeDate.heure, timeDate.minute, timeDate.jour, timeDate.mois, timeDate.annee);
 
-    // ppm sous la qualité de l'air
+  // ppm sous la qualite de l'air
   tft.fillRect(119, 140, 82, 16, DK_BG);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(125, 145);
   tft.printf("%.2f ppm", sensorData.gasPpm);
 
@@ -376,11 +331,11 @@ static void drawDashboardVariable()
   tft.fillRect(275, 83, 20, 50, DK_BG);
   if (sensorData.gacheporte.active)
   {
-    tft.fillCircle(285, 100, 6, VERT); // Portail
+    tft.fillCircle(285, 100, 6, VERT); // Porte (gache)
   }
   else
   {
-    tft.fillCircle(285, 100, 6, ROUGE); // Portail
+    tft.fillCircle(285, 100, 6, ROUGE); // Porte (gache)
   }
 
   if (sensorData.alarme.activer)
@@ -394,20 +349,18 @@ static void drawDashboardVariable()
 
   if (sensorData.portail.ouverture)
   {
-    tft.fillCircle(285, 150, 6, VERT); // Porte
+    tft.fillCircle(285, 150, 6, VERT); // Portail
   }
   else
   {
-    tft.fillCircle(285, 150, 6, ROUGE); // Porte
+    tft.fillCircle(285, 150, 6, ROUGE); // Portail
   }
 
   // tft.drawRoundRect(206, 8, 111, 40, 4, 0x10C4);
   // tft.drawRoundRect(215, 64, 94, 117, 4, 0x10C4);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(233, 96);
 
-  // environement
+  // Qualite de l'air
   tft.fillRect(165, 78, 20, 50, DK_BG);
   if (sensorData.airQuality.good)
   {
@@ -555,43 +508,31 @@ void drawControlPannel()
 
   tft.drawRoundRect(112, 16, 97, 31, 4, NOIR);
 
-  // === PORTAIL ===
+  // === GACHE PORTE ===
   tft.drawRoundRect(12, 58, 144, 60, 4, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(55, 62);
   tft.print("Gache Porte");
 
   tft.fillRoundRect(17, 93, 133, 21, 6, BLANC);
   tft.drawRoundRect(17, 93, 133, 21, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("Activer", 83, 103);
 
   // === ALARME ===
   tft.drawRoundRect(12, 122, 144, 60, 4, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(45, 126);
   tft.print("Alarme");
 
   tft.fillRoundRect(87, 156, 63, 21, 6, BLANC);
   tft.drawRoundRect(87, 156, 63, 21, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("Désactiver", 118, 166);
 
   tft.fillRoundRect(17, 156, 63, 21, 6, BLANC);
   tft.drawRoundRect(17, 156, 63, 21, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("Activer", 48, 166);
 
   // === VMC ===
 
   tft.drawRoundRect(x_vmc, y_vmc, 144, 60, 4, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(222, 62);
   tft.print("VMC");
 
@@ -602,8 +543,6 @@ void drawControlPannel()
 
   // === ECLAIRAGE ===
   tft.drawRoundRect(162, 122, 144, 60, 4, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(206, 126);
   tft.print("Eclairage");
 
@@ -615,38 +554,26 @@ void drawControlPannel()
 
   // === VOLET ROULANT ===
   tft.drawRoundRect(13, 187, 292, 45, 4, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(121, 192);
   tft.print("Volet Roulant");
 
   tft.fillRoundRect(35, 207, 60, 17, 6, BLANC);
   tft.drawRoundRect(35, 207, 60, 17, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("Monte", 65, 215);
 
   tft.fillRoundRect(129, 207, 60, 17, 6, BLANC);
   tft.drawRoundRect(129, 207, 60, 17, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("Stop", 159, 215);
 
   tft.fillRoundRect(218, 207, 60, 17, 6, BLANC);
   tft.drawRoundRect(218, 207, 60, 17, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("Descend", 248, 215);
 
   // === HOME & HEURE ===
   tft.fillRoundRect(12, 16, 87, 31, 6, BLANC);
   tft.drawRoundRect(12, 16, 87, 31, 6, NOIR);
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   drawCenteredText("HOME", 55, 31);
 
-  tft.setTextColor(NOIR);
-  tft.setTextSize(1);
   tft.setCursor(242, 26);
   tft.print("12:13");
 
@@ -723,35 +650,25 @@ void drawCurrentScreen()
 {
   switch (g_screen)
   {
-  case DK_SCREEN_0:
+  case ECRAN_ACCUEIL:
     drawHomeScreen();
     break;
-  case DK_SCREEN_1:
-    drawSettingsScreen();
-    break;
-  case DK_SCREEN_2:
-    drawNowPlayingCard();
-    break;
-  case DK_SCREEN_3:
+  case ECRAN_DASHBOARD:
     drawDashboardScreen();
     break;
-  case DK_SCREEN_4:
-    drawRFIDCheck();
-    break;
-  case DK_SCREEN_5:
+  case ECRAN_CONTROLE:
     drawControlPannel();
     break;
-  case DK_SCREEN_6:
+  case ECRAN_CARTES:
     drawGestionCartes();
     break;
   }
 }
 
-// TODO: Read touch/buttons and set `g_screen` (and element values).
+// Changement d'ecran par le moniteur serie (non utilise : le tactile le fait)
 void handleUiActions()
 {
-  // COMPLETE default behavior: screen switching via Serial.
-  // Type a screen number (0..N-1) in Serial Monitor and press Enter.
+  // Taper un numero d'ecran puis Entree dans le moniteur serie
   static int num = -1;
   while (Serial.available())
   {
@@ -771,7 +688,7 @@ void handleUiActions()
           num = 0;
         if (num > maxScreen)
           num = maxScreen;
-        const DkScreenId next = (DkScreenId)num;
+        const EcranId next = (EcranId)num;
         if (next != g_screen)
         {
           g_screen = next;
@@ -782,19 +699,19 @@ void handleUiActions()
     }
   }
 
-  // Optional: auto-cycle every 5 seconds (uncomment to enable)
+  // Option : change d'ecran toutes les 5 s (a decommenter)
   // static uint32_t last = 0;
-  // if (millis() - last > 5000) { last = millis(); g_screen = (DkScreenId)((g_screen + 1) % 6); g_dirty = true; }
+  // if (millis() - last > 5000) { last = millis(); g_screen = (EcranId)((g_screen + 1) % 6); g_dirty = true; }
 }
 
 void loadScreen(int num)
 {
-  const int maxScreen = 6;
+  const int maxScreen = ECRAN_CARTES;
   if (num < 0)
     num = 0;
   if (num > maxScreen)
     num = maxScreen;
-  const DkScreenId next = (DkScreenId)num;
+  const EcranId next = (EcranId)num;
   if (next != g_screen)
   {
     g_screen = next;
