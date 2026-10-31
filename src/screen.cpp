@@ -174,37 +174,6 @@ void drawHomeScreen()
   tft.drawRoundRect(107, 73, 107, 30, 4, BLANC);
 }
 
-void drawSettingsScreen()
-{
-  tft.fillScreen(DK_BG);
-}
-
-void drawNowPlayingCard()
-{
-  tft.fillScreen(DK_BG);
-
-  tft.fillRect(0, 0, 240, 26, 0xFFFF);
-  tft.drawLine(0, 25, 240, 25, 0xFFFF);
-  tft.setTextColor(0x10C4);
-  tft.setTextSize(1);
-  tft.setCursor(4, 9);
-  tft.print("Music");
-
-  tft.fillRoundRect(12, 40, 216, 110, 6, 0xFFFF);
-  tft.drawRoundRect(12, 40, 216, 110, 6, 0xFFFF);
-  tft.setCursor(16, 44);
-  tft.print("Card");
-
-  tft.fillRoundRect(24, 52, 64, 64, 4, 0xFFFF);
-  tft.drawRoundRect(24, 52, 64, 64, 4, 0xFFFF);
-  tft.setCursor(100, 58);
-  tft.print("Track Name");
-  tft.setCursor(100, 74);
-  tft.print("Artist");
-
-  tft.drawRoundRect(24, 124, 192, 14, 3, 0xFFFF);
-  tft.fillRoundRect(26, 126, 65, 10, 3, 0xFFFF);
-}
 
 void drawDashboardScreen()
 {
@@ -217,30 +186,11 @@ void drawDashboardScreen()
   tft.print("DASHBOARD");
 
   tft.drawRoundRect(86, 13, 109, 30, 4, 0x10C4);
-  // tft.drawRGBBitmap(20, 95, icon_temp_el_8iewusar9, 16, 16);
-
-  // tft.drawRGBBitmap(122, 117, icon_nuke_el_wc9q5tvoc, 16, 16);
 
   tft.setCursor(19, 98);
-  // tft.printf("%.2f C", sensorData.temperature);
 
   tft.setCursor(125, 120);
   tft.print("Qualite");
-
-  
-  
-  
-  
-  
-
-  // tft.drawRGBBitmap(298, 13, icon_wifi_1_el_ur9q8wxw3, 16, 16);
-  /*
-    tft.setTextColor(NOIR);
-    tft.setTextSize(1);
-    tft.setCursor(47, 165);
-    tft.printf("%.2f ppm", sensorData.temperature);*/
-
-  // tft.drawRGBBitmap(19, 162, icon_nuke_el_wc9q5tvoc, 16, 16);
 
   tft.setCursor(231, 123);
   tft.print("Alarme");
@@ -248,20 +198,10 @@ void drawDashboardScreen()
   tft.setCursor(231, 150);
   tft.print("Volet");
 
-  // tft.fillCircle(285, 106, 6, 0x10C4);
-  // tft.fillCircle(285, 134, 6, 0x10C4);
-  // tft.fillCircle(285, 160, 6, 0x10C4);
-  // tft.drawRGBBitmap(20, 119, icon_temp_el_8iewusar9, 16, 16);
-
   tft.setCursor(19, 121);
-  // tft.printf("%.2f lx", sensorData.light);
-
-  // tft.drawRGBBitmap(20, 142, icon_temp_el_8iewusar9, 16, 16);
 
   tft.setCursor(19, 145);
-  // tft.printf("%.2f hPa", sensorData.pressure);
 
-  // tft.fillCircle(190, 125, 6, NOIR);
   tft.fillRoundRect(5, 13, 63, 30, 6, BLANC);
   tft.drawRoundRect(5, 13, 63, 30, 6, NOIR);
   drawCenteredText("HOME", 43, 28);
@@ -356,8 +296,6 @@ static void drawDashboardVariable()
     tft.fillCircle(285, 150, 6, ROUGE); // Portail
   }
 
-  // tft.drawRoundRect(206, 8, 111, 40, 4, 0x10C4);
-  // tft.drawRoundRect(215, 64, 94, 117, 4, 0x10C4);
   tft.setCursor(233, 96);
 
   // Qualite de l'air
